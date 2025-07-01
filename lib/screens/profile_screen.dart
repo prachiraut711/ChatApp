@@ -181,13 +181,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     child: Image.asset("images/add_image.png")),
 
                     ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.white,
-                      shape: CircleBorder(),
-                      fixedSize: Size(mq.width * .3, mq.height * .15)
-                    ),
-                    onPressed: (){}, 
-                    child: Image.asset("images/image.png"))
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.white,
+                        shape: CircleBorder(),
+                        fixedSize: Size(mq.width * .3, mq.height * .15)
+                      ),
+                      onPressed: (){}, 
+                      child: Image.asset("images/image.png"))
                 ],
               )
             ],

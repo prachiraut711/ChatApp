@@ -7,6 +7,7 @@ import 'firebase_options.dart';
 late Size mq;
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
   _initializeFirebase();
   runApp(const MyApp());
 }
@@ -20,21 +21,20 @@ class MyApp extends StatelessWidget {
       title: 'We Chat',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-  useMaterial3: false, 
-  primarySwatch: Colors.blue,
-  appBarTheme: AppBarTheme(
-    centerTitle: true,
-    elevation: 1,
-    backgroundColor: Colors.white,
-    titleTextStyle: TextStyle(
-      color: Colors.black,
-      fontWeight: FontWeight.normal,
-      fontSize: 19,
-    ),
-    iconTheme: IconThemeData(color: Colors.black),
-  ),
-),
-
+        useMaterial3: false, 
+        primarySwatch: Colors.blue,
+        appBarTheme: AppBarTheme(
+          centerTitle: true,
+          elevation: 1,
+          backgroundColor: Colors.white,
+          titleTextStyle: TextStyle(
+            color: Colors.black,
+            fontWeight: FontWeight.normal,
+            fontSize: 19,
+          ),
+          iconTheme: IconThemeData(color: Colors.black),
+        ),
+      ),
       home: const SplashScreen(),
     );
   }
