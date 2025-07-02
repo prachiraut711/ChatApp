@@ -60,6 +60,13 @@ class APIs {
     await firestore.collection("users").doc(user.uid).update({"name" : me.name, "about" : me.about});
   }
 
+  /// ******** Chat Screen Related APIs *******
+
+  //For getting all messages of a specific converstion from firestore database
+   static Stream<QuerySnapshot<Map<String, dynamic>>> getAllMessages() {
+    return firestore.collection("messages").snapshots();
+  }
+
 }
 
 

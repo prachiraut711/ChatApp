@@ -4,6 +4,7 @@ import 'package:chat_app/main.dart';
 import 'package:chat_app/screens/auth/login_screen.dart';
 import 'package:chat_app/screens/home_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -17,7 +18,14 @@ class _SplashScreenState extends State<SplashScreen> {
   void initState() {
     // TODO: implement initState
     super.initState();
+     // Set UI mode & system bar styles
+      SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+      SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+        systemNavigationBarColor: Colors.white,
+        statusBarColor: Colors.white,
+      ));
     Future.delayed(Duration(seconds: 2), () {
+      //exit full screen
       if(APIs.auth.currentUser != null) {
         log("\nUser: ${APIs.auth.currentUser}");
         Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const HomeScreen() ));

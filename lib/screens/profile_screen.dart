@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:chat_app/api/apis.dart';
@@ -21,6 +22,7 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> {
   final _formKey = GlobalKey<FormState>();
+  String? _image;
 
   @override
   Widget build(BuildContext context) {
@@ -63,12 +65,26 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   Stack(
                     children: [
                       //profile picture
+                      _image != null 
+                      ?
+                      //loacal image
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(mq.height * .1),
+                        child: Image.file(
+                          File(_image!),
+                          width: mq.height * .2,
+                          height: mq.height * .2,
+                          fit: BoxFit.cover,
+                        ),
+                      ) 
+                      :
+                      //image from server
                       ClipRRect(
                         borderRadius: BorderRadius.circular(mq.height * .1),
                         child: CachedNetworkImage(
                           width: mq.height * .2,
                           height: mq.height * .2,
-                          fit: BoxFit.fill,
+                          fit: BoxFit.cover,
                           imageUrl: widget.user.image,
                           errorWidget: (context, url, error) => const CircleAvatar(child: Icon(CupertinoIcons.person),),
                         ),
@@ -176,6 +192,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       final XFile? image = await picker.pickImage(source: ImageSource.gallery);
                       if(image != null) {
                         log("image path : ${image.path} -- MimeType: ${image.mimeType} ");
+                        setState(() {
+                          _image = image.path;
+                        });
+                        // for hiding bottom sheet
+                        // ignore: use_build_context_synchronously
+                        Navigator.pop(context);
                       }
                     }, 
                     child: Image.asset("images/add_image.png")),
@@ -186,7 +208,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         shape: CircleBorder(),
                         fixedSize: Size(mq.width * .3, mq.height * .15)
                       ),
-                      onPressed: (){}, 
+                      onPressed: () async {
+                        final ImagePicker picker = ImagePicker();
+                      //pick an image
+                      final XFile? image = await picker.pickImage(source: ImageSource.camera);
+                      if(image != null) {
+                        log("image path : ${image.path}");
+                        setState(() {
+                          _image = image.path;
+                        });
+                        // for hiding bottom sheet
+                        // ignore: use_build_context_synchronously
+                        Navigator.pop(context);
+                      }
+                      }, 
                       child: Image.asset("images/image.png"))
                 ],
               )
