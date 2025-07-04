@@ -113,7 +113,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   label: RichText(
                       text: const TextSpan(
                           style: TextStyle(fontSize: 16),
-                          children: [TextSpan(text: "Login with "), TextSpan(text: "Google", style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500))])))),
+                          children: [TextSpan(text: "Login with ", style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500)), TextSpan(text: "Google", style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500))])))),
         ],
       ),
     );
