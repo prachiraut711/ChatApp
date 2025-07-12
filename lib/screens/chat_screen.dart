@@ -3,12 +3,13 @@ import 'dart:developer';
 import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:chat_app/api/apis.dart';
+import 'package:chat_app/helper/my_date_util.dart';
 import 'package:chat_app/main.dart';
 import 'package:chat_app/models/chat_user.dart';
 import 'package:chat_app/models/message.dart';
+import 'package:chat_app/screens/view_profile_screen.dart';
 import 'package:chat_app/widgets/message_card.dart';
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
-import 'package:flutter/foundation.dart' as foundation;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -149,8 +150,16 @@ class _ChatScreenState extends State<ChatScreen> {
 
 Widget _appBar() {
   return InkWell(
-    onTap: (){},
-    child: Row(
+    onTap: (){
+      Navigator.push(context, MaterialPageRoute(builder: (_) => ViewProfileScreen(user: widget.user)));
+    },
+    child: StreamBuilder(
+      stream: APIs.getUserInfo(widget.user), 
+      builder: (context, snapshot) {
+        final data = snapshot.data?.docs;
+        final list = data?.map((e) => ChatUser.fromJson(e.data())).toList() ?? [];
+
+        return Row(
       children: [
         IconButton(
           onPressed: () => Navigator.pop(context), 
@@ -162,7 +171,7 @@ Widget _appBar() {
             child: CachedNetworkImage(
               width: mq.height * .05,
               height: mq.height * .05,
-              imageUrl: widget.user.image,
+              imageUrl: list.isNotEmpty ? list[0].image : widget.user.image,
               errorWidget: (context, url, error) => const CircleAvatar(child: Icon(CupertinoIcons.person),),
             ),
           ),
@@ -173,12 +182,20 @@ Widget _appBar() {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(widget.user.name, style: TextStyle(fontSize: 16, color: Colors.black87, fontWeight: FontWeight.w500),),
+            Text(list.isNotEmpty ? list[0].name : widget.user.name, style: TextStyle(fontSize: 16, color: Colors.black87, fontWeight: FontWeight.w500),),
             SizedBox(height: 2),
-            Text("Last seen not available", style: TextStyle(fontSize: 13, color: Colors.black54),)
+            Text(
+              list.isNotEmpty 
+              ? list[0].isOnline
+                ? "Online"
+                : MyDateUtil.getLastActiveTime(context: context, lastActive: list[0].lastActive)
+              : MyDateUtil.getLastActiveTime(context: context, lastActive: widget.user.lastActive), 
+              style: TextStyle(fontSize: 13, color: Colors.black54),
+            )
           ]),
       ],
-    ),
+    );
+    })
   );
 }
 
@@ -209,9 +226,11 @@ Widget _chatInput(){
                     keyboardType: TextInputType.multiline,
                     maxLines: null,
                     onTap: () {
-                      if(_showEmoji) setState(() {
+                      if(_showEmoji) {
+                        setState(() {
                         _showEmoji = !_showEmoji;
                       });
+                      }
                     },
                     decoration: InputDecoration(
                       hintText: "Type Something...",

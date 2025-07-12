@@ -5,6 +5,7 @@ import 'package:chat_app/main.dart';
 import 'package:chat_app/models/chat_user.dart';
 import 'package:chat_app/models/message.dart';
 import 'package:chat_app/screens/chat_screen.dart';
+import 'package:chat_app/widgets/dialogs/profile_dialog.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -42,13 +43,18 @@ class _ChatUserCardState extends State<ChatUserCard> {
             }
                     
             return ListTile(
-              leading: ClipRRect(
-                borderRadius: BorderRadius.circular(mq.height * .3),
-                child: CachedNetworkImage(
-                  width: mq.height * .055,
-                  height: mq.height * .055,
-                  imageUrl: widget.user.image,
-                  errorWidget: (context, url, error) => const CircleAvatar(child: Icon(CupertinoIcons.person),),
+              leading: InkWell(
+                onTap: () {
+                  showDialog(context: context, builder: (_) => ProfileDialog(user: widget.user,));
+                },
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(mq.height * .3),
+                  child: CachedNetworkImage(
+                    width: mq.height * .055,
+                    height: mq.height * .055,
+                    imageUrl: widget.user.image,
+                    errorWidget: (context, url, error) => const CircleAvatar(child: Icon(CupertinoIcons.person),),
+                  ),
                 ),
               ),
               title: Text(widget.user.name),

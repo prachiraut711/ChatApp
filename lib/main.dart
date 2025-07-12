@@ -1,14 +1,13 @@
 import 'package:chat_app/screens/splash_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'firebase_options.dart';
 
 //global object for accesing device screen size
 late Size mq;
 
-void main() {
+void main() async{
   WidgetsFlutterBinding.ensureInitialized();
-  _initializeFirebase();
+  await Firebase.initializeApp();
   runApp(const MyApp());
 }
 
@@ -38,10 +37,4 @@ class MyApp extends StatelessWidget {
       home: const SplashScreen(),
     );
   }
-}
-
-_initializeFirebase() async {
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
 }

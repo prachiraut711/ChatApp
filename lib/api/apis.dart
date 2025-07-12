@@ -1,7 +1,10 @@
+import 'dart:developer';
+
 import 'package:chat_app/models/chat_user.dart';
 import 'package:chat_app/models/message.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 
 class APIs {
   // for authentication
@@ -27,6 +30,9 @@ class APIs {
     await firestore.collection("users").doc(user.uid).get().then((user) async {
       if (user.exists) {
         me = ChatUser.fromJson(user.data()!);
+        await getFirebaseMessagingToken();
+        //for setting user status to active
+        APIs.updateActiveStatus(true);
       } else {
         await createUser().then((value) => getSelfInfo());
       }
@@ -34,6 +40,21 @@ class APIs {
   }
 
   static User get user => auth.currentUser!;
+
+  //for accessing firebase messaging (Push Notifiaction)
+  static FirebaseMessaging fMessaging = FirebaseMessaging.instance;
+
+  //for getting firebase messaging token
+  static Future<void> getFirebaseMessagingToken() async {
+    await fMessaging.requestPermission();
+
+    await fMessaging.getToken().then((t) {
+      if(t != null) {
+        me.pushToken = t;
+        log("Push token: $t");
+      }
+    });
+  }
 
   //for creating a new user
   static Future<void> createUser() async {
@@ -70,6 +91,25 @@ class APIs {
         .collection("users")
         .doc(user.uid)
         .update({"name": me.name, "about": me.about});
+  }
+
+  // for getting specific user info
+  static Stream<QuerySnapshot<Map<String, dynamic>>> getUserInfo(ChatUser chatUser) {
+    return firestore
+        .collection("users")
+        .where("id", isEqualTo: chatUser.id)
+        .snapshots();
+  }
+
+  static Future<void> updateActiveStatus(bool isOnline) async {
+    firestore
+        .collection("users")
+        .doc(user.uid).update({
+          "is_online" : isOnline, 
+          "last_active" : DateTime.now().millisecondsSinceEpoch.toString(),
+          "push_token" :me.pushToken,
+        });
+
   }
 
   /// ******** Chat Screen Related APIs *******///
